@@ -1,6 +1,7 @@
 /* global mbsfwAdmin, jQuery */
 ( function ( $ ) {
 	'use strict';
+	console.log('MBSFW Admin JS Loaded');
 
 	// ── View logs ────────────────────────────────────────────────────────────
 	$( document ).on( 'click', '.mbsfw-view-logs', function () {
@@ -8,7 +9,9 @@
 		var $panel = $( '#mbsfw-logs-panel' );
 		$( '#mbsfw-logs-content' ).html( '<p>' + mbsfwAdmin.i18n.syncing + '</p>' );
 		$panel.show();
-		$( 'html, body' ).animate( { scrollTop: $panel.offset().top - 40 }, 300 );
+		if ( $panel.length ) {
+			$( 'html, body' ).animate( { scrollTop: $panel.offset().top - 40 }, 300 );
+		}
 
 		$.post( mbsfwAdmin.ajaxurl, {
 			action:  'mbsfw_get_logs',
@@ -128,5 +131,28 @@
 		} catch ( e ) {
 			window.alert( raw );
 		}
+	} );
+	// ── Trigger worker (dashboard) ───────────────────────────────────────────
+	$( document ).on( 'click', '#mbsfw-trigger-worker', function () {
+		console.log('Process Queue Now button clicked');
+		var $btn = $( this );
+		var originalHtml = $btn.html();
+		$btn.prop( 'disabled', true ).html( '<span class="dashicons dashicons-update spin"></span> Processing…' );
+
+		$.post( mbsfwAdmin.ajaxurl, {
+			action:      'mbsfw_trigger_worker',
+			_ajax_nonce: mbsfwAdmin.nonce,
+		} ).done( function ( response ) {
+			if ( response.success ) {
+				$btn.text( 'Done ✓' );
+				window.location.reload();
+			} else {
+				alert( response.data );
+				$btn.prop( 'disabled', false ).html( originalHtml );
+			}
+		} ).fail( function () {
+			alert( 'Request failed.' );
+			$btn.prop( 'disabled', false ).html( originalHtml );
+		} );
 	} );
 } )( jQuery );

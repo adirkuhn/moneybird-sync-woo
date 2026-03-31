@@ -282,6 +282,15 @@ a.mbsfw-step:hover {
     color: #d63638;
 }
 
+.spin {
+    animation: mbsfw-spin 2s infinite linear;
+}
+
+@keyframes mbsfw-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 782px) {
     .mbsfw-step__label { display: none; }

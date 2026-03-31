@@ -16,7 +16,8 @@ namespace MoneybirdSyncForWoo;
  *   6. Worker         – registers cron hook.
  *   7. OrderListener  – registers WooCommerce hooks (only if sync enabled).
  */
-class Plugin {
+class Plugin
+{
 	private static ?self $instance = null;
 
 	private OAuthClient $oauth;
@@ -32,43 +33,47 @@ class Plugin {
 	private AdminUI $admin_ui;
 	private Onboarding $onboarding;
 
-	private function __construct() {}
+	private function __construct()
+	{
+	}
 
-	public static function instance(): self {
-		if ( null === self::$instance ) {
+	public static function instance(): self
+	{
+		if (null === self::$instance) {
 			self::$instance = new self();
 		}
 		return self::$instance;
 	}
 
-	public function init(): void {
+	public function init(): void
+	{
 		global $wpdb;
 
 		// ── OAuth & API client ─────────────────────────────────────────────────
-		$this->oauth  = OAuthClient::from_settings();
+		$this->oauth = OAuthClient::from_settings();
 		$this->client = new MoneybirdClient(
 			$this->oauth->get_access_token(),
 			$this->oauth->get_selected_administration_id()
 		);
 
 		// ── Core infrastructure ────────────────────────────────────────────────
-		$this->logger = new Logger( $wpdb );
-		$this->queue  = new TaskQueue( $wpdb );
+		$this->logger = new Logger($wpdb);
+		$this->queue = new TaskQueue($wpdb);
 
 		// ── Domain services ────────────────────────────────────────────────────
 		$settings = AdminUI::get_settings();
-		$clearing = (string) ( $settings['clearing_account_id'] ?? '' );
-		$bank     = (string) ( $settings['bank_account_id'] ?? '' );
-		$fees_la  = (string) ( $settings['fees_ledger_account_id'] ?? '' );
+		$clearing = (string) ($settings['clearing_account_id'] ?? '');
+		$bank = (string) ($settings['bank_account_id'] ?? '');
+		$fees_la = (string) ($settings['fees_ledger_account_id'] ?? '');
 
-		$this->sync_service    = new SyncService( $this->client, $this->logger, $clearing );
-		$this->fee_service     = new FeeService( $this->client, $this->logger, $clearing, $fees_la );
-		$this->payout_service  = new PayoutService( $this->client, $this->logger, $clearing, $bank );
-		$this->reconciliation  = new ReconciliationService( $this->client, $this->logger );
+		$this->sync_service = new SyncService($this->client, $this->logger, $clearing);
+		$this->fee_service = new FeeService($this->client, $this->logger, $clearing, $fees_la);
+		$this->payout_service = new PayoutService($this->client, $this->logger, $clearing, $bank);
+		$this->reconciliation = new ReconciliationService($this->client, $this->logger);
 
 		// ── Listeners & workers ────────────────────────────────────────────────
-		$this->order_listener = new OrderListener( $this->queue, $this->logger );
-		$this->worker         = new Worker(
+		$this->order_listener = new OrderListener($this->queue, $this->logger);
+		$this->worker = new Worker(
 			$this->queue,
 			$this->sync_service,
 			$this->fee_service,
@@ -77,25 +82,29 @@ class Plugin {
 		);
 
 		// ── Admin ──────────────────────────────────────────────────────────────
-		$this->admin_ui   = new AdminUI( $this->queue, $this->logger, $wpdb );
-		$this->onboarding = new Onboarding( $this->oauth, $this->client );
+		$this->onboarding = new Onboarding($this->oauth, $this->client);
+		$this->admin_ui = new AdminUI($this->queue, $this->onboarding, $this->logger, $wpdb, $this->worker);
+
 
 		// ── Hook registration ──────────────────────────────────────────────────
 		$this->onboarding->register();
 		$this->admin_ui->register();
 		$this->worker->register();
+		$this->worker->schedule();
 
 		// Only queue new orders when sync is explicitly enabled.
-		if ( ! empty( $settings['sync_enabled'] ) ) {
+		if (!empty($settings['sync_enabled'])) {
 			$this->order_listener->register_hooks();
 		}
 	}
 
-	public function get_reconciliation_service(): ReconciliationService {
+	public function get_reconciliation_service(): ReconciliationService
+	{
 		return $this->reconciliation;
 	}
 
-	public function get_oauth(): OAuthClient {
+	public function get_oauth(): OAuthClient
+	{
 		return $this->oauth;
 	}
 }

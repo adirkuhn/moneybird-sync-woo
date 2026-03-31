@@ -164,4 +164,21 @@ class TaskQueue {
 			)
 		);
 	}
+
+	/**
+	 * Reset all failed tasks to pending.
+	 */
+	public function reset_failed(): void {
+		$now = current_time( 'mysql', true );
+		$this->db->query(
+			$this->db->prepare(
+				"UPDATE {$this->table}
+                 SET status = %s, attempts = 0, locked_at = NULL, updated_at = %s
+                 WHERE status = %s",
+				Task::STATUS_PENDING,
+				$now,
+				Task::STATUS_FAILED
+			)
+		);
+	}
 }

@@ -12,3 +12,11 @@ parameters:
         - ../vendor
         - ../tests
     checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#^Class WC_Order not found\.$#'
+        - '#^Class WC_Order_Item_Product not found\.$#'
+        - '#^Call to method .* on an unknown class WC_Order\.$#'
+        - '#^Parameter \#1 \$order of method .* expects WC_Order#'
+        - '#^Class WC_Order referenced with incorrect case#'
+        - identifier: argument.type
+          message: '#Parameter \#1 \$query of method wpdb::prepare\(\) expects literal-string#'

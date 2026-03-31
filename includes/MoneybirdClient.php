@@ -63,6 +63,34 @@ class MoneybirdClient {
 	}
 
 	/**
+	 * Transition a draft invoice to 'sent' (open) status.
+	 *
+	 * @return array<string, mixed>
+	 * @throws \RuntimeException
+	 */
+	public function send_invoice( string $invoice_id ): array {
+		return $this->request(
+			'POST',
+			"/sales_invoices/{$invoice_id}/events",
+			array(),
+			array(
+				'sales_invoice_event' => array(
+					'action' => 'send_invoice',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Delete a sales invoice.
+	 *
+	 * @throws \RuntimeException
+	 */
+	public function delete_invoice( string $invoice_id ): void {
+		$this->request( 'DELETE', "/sales_invoices/{$invoice_id}" );
+	}
+
+	/**
 	 * Create a payment on a sales invoice targeting the Stripe Clearing financial account.
 	 *
 	 * @return array<string, mixed>
@@ -182,7 +210,7 @@ class MoneybirdClient {
 	 * @throws \RuntimeException
 	 */
 	public function test_connection(): array {
-		return $this->request( 'GET', '' ); // GET /api/v2/{admin_id} returns administration details.
+		return $this->request( 'GET', '/financial_accounts' );
 	}
 
 	// ── Internal HTTP ────────────────────────────────────────────────────────

@@ -44,15 +44,38 @@ class SyncService {
 			throw new \RuntimeException( "Order {$order_id} not found." );
 		}
 
-		if ( 'stripe' !== $order->get_payment_method() ) {
-			$this->logger->info( "Order {$order_id} is not a Stripe order. Skipping.", $task->id );
+		$settings        = AdminUI::get_settings();
+		$allowed_raw     = (string) ($settings['allowed_payment_methods'] ?? '["stripe"]');
+		$allowed_methods = json_decode($allowed_raw, true);
+		if (!is_array($allowed_methods) || empty($allowed_methods)) {
+			$allowed_methods = array('stripe');
+		}
+
+		if (!in_array($order->get_payment_method(), $allowed_methods, true)) {
+			$this->logger->info("Order {$order_id} payment method '{$order->get_payment_method()}' is not in the allowed list. Skipping.", $task->id);
 			return;
 		}
 
-		$this->logger->info( "Processing sync_order for order {$order_id}.", $task->id );
+		$invoice_id = '';
+		try {
+			$invoice_id = $this->ensure_invoice( $order, $task->id );
+			$this->ensure_payment( $order, $invoice_id, $task->id );
+		} catch ( \Throwable $e ) {
+			if ( $invoice_id ) {
+				$this->logger->warning( "Sync failed. Deleting partially synced invoice {$invoice_id}.", $task->id );
+				try {
+					$this->client->delete_invoice( $invoice_id );
+				} catch ( \Throwable $cleanup_err ) {
+					$this->logger->error( "Could not delete partially synced invoice {$invoice_id}: " . $cleanup_err->getMessage(), $task->id );
+				}
 
-		$invoice_id = $this->ensure_invoice( $order, $task->id );
-		$this->ensure_payment( $order, $invoice_id, $task->id );
+				// Clear meta to allow the worker to start over.
+				$order->delete_meta_data( '_mb_invoice_id' );
+				$order->delete_meta_data( '_mb_payment_created' );
+				$order->save();
+			}
+			throw $e;
+		}
 
 		$this->logger->info( "Order {$order_id} synced successfully.", $task->id );
 	}
@@ -102,9 +125,18 @@ class SyncService {
 		);
 		$invoice_id = (string) $invoice['id'];
 
+		// Mark invoice as sent (open) to allow payment registration.
+		try {
+			$this->client->send_invoice( $invoice_id );
+		} catch ( \Exception $e ) {
+			// If it fails to send (e.g. already sent or another issue), we log it but continue
+			// as the payment registration might still work if it's not a draft anymore.
+			$this->logger->warning( "Could not send invoice {$invoice_id}: " . $e->getMessage(), $task_id );
+		}
+
 		$order->update_meta_data( '_mb_invoice_id', $invoice_id );
 		$order->save_meta_data();
-		$this->logger->info( "Created Moneybird invoice {$invoice_id}.", $task_id );
+		$this->logger->info( "Created and sent Moneybird invoice {$invoice_id}.", $task_id );
 		return $invoice_id;
 	}
 

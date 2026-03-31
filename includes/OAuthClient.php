@@ -44,6 +44,17 @@ class OAuthClient {
 		return (string) get_option( self::ADMIN_OPTION, '' );
 	}
 
+	public function save_credentials( string $client_id, string $client_secret ): void {
+		$settings                   = AdminUI::get_settings();
+		$settings['oauth_client_id']     = $client_id;
+		$settings['oauth_client_secret'] = $client_secret;
+		update_option( AdminUI::OPTION_KEY, $settings );
+
+		// Update the in-memory values so the current request can use them immediately.
+		$this->client_id     = $client_id;
+		$this->client_secret = $client_secret;
+	}
+
 	public function save_administration_id( string $administration_id ): void {
 		update_option( self::ADMIN_OPTION, $administration_id, false );
 	}
@@ -69,7 +80,7 @@ class OAuthClient {
 				'client_id'     => $this->client_id,
 				'redirect_uri'  => $this->get_redirect_uri(),
 				'response_type' => 'code',
-				'scope'         => 'sales_invoices documents estimates bank',
+				'scope'         => 'sales_invoices documents estimates bank settings',
 				'state'         => $state,
 			),
 			self::AUTH_URL
@@ -80,7 +91,7 @@ class OAuthClient {
 	 * The redirect URI registered in the Moneybird OAuth application.
 	 */
 	public function get_redirect_uri(): string {
-		return admin_url( 'admin.php?page=mb-onboarding&mbsfw_oauth=callback' );
+		return admin_url( 'admin.php?page=mb-onboarding' );
 	}
 
 	// ── Callback handling ────────────────────────────────────────────────────
