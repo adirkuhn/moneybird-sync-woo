@@ -1,0 +1,14 @@
+includes:
+    - ../vendor/szepeviktor/phpstan-wordpress/extension.neon
+    - ../vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: 8
+    paths:
+        - ../includes
+        - ../models
+        - ../moneybird-sync-for-woo.php
+    excludePaths:
+        - ../vendor
+        - ../tests
+    checkMissingIterableValueType: false

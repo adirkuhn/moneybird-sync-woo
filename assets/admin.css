@@ -1,0 +1,289 @@
+/* Moneybird Sync for WooCommerce — Admin Styles */
+
+/* ── Layout wrapper ─────────────────────────────────────────────────────── */
+.mbsfw-wrap {
+    max-width: 1200px;
+}
+
+/* ── Wizard step bar ────────────────────────────────────────────────────── */
+.mbsfw-step-bar {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 28px;
+    padding: 0;
+    list-style: none;
+}
+
+.mbsfw-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #787c82;
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+a.mbsfw-step:hover {
+    color: #2271b1;
+}
+
+.mbsfw-step--active {
+    color: #1d2327;
+    font-weight: 700;
+}
+
+.mbsfw-step--done {
+    color: #00a32a;
+}
+
+.mbsfw-step__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #dcdcde;
+    color: #50575e;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.mbsfw-step--active .mbsfw-step__num {
+    background: #2271b1;
+    color: #fff;
+}
+
+.mbsfw-step--done .mbsfw-step__num {
+    background: #00a32a;
+    color: #fff;
+}
+
+.mbsfw-step--done .mbsfw-step__num::after {
+    content: "✓";
+    font-size: 13px;
+}
+
+.mbsfw-step--done .mbsfw-step__num {
+    font-size: 0; /* hide number, show checkmark only */
+}
+
+.mbsfw-step__connector {
+    display: block;
+    flex: 1;
+    min-width: 24px;
+    height: 2px;
+    background: #dcdcde;
+    margin: 0 8px;
+}
+
+/* ── Wizard card ────────────────────────────────────────────────────────── */
+.mbsfw-wizard-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin-top: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+.mbsfw-wizard-card h2 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #1d2327;
+}
+
+.mbsfw-summary-box {
+    background: #f0f6fc;
+    border: 1px solid #c5d9ed;
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 16px 0;
+}
+
+.mbsfw-summary-box ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}
+
+.mbsfw-summary-box li {
+    padding: 4px 0;
+    color: #1d2327;
+}
+
+/* ── Stat cards (dashboard) ─────────────────────────────────────────────── */
+.mbsfw-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 20px 0 28px;
+}
+
+.mbsfw-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+.mbsfw-stat-card .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.mbsfw-stat-card__body {
+    display: flex;
+    flex-direction: column;
+}
+
+.mbsfw-stat-card__body strong {
+    font-size: 28px;
+    line-height: 1;
+    color: #1d2327;
+}
+
+.mbsfw-stat-card__body span {
+    font-size: 12px;
+    color: #787c82;
+    margin-top: 4px;
+}
+
+.mbsfw-stat-card--green  .dashicons { color: #00a32a; }
+.mbsfw-stat-card--blue   .dashicons { color: #2271b1; }
+.mbsfw-stat-card--red    .dashicons { color: #d63638; }
+.mbsfw-stat-card--grey   .dashicons { color: #787c82; }
+
+.mbsfw-last-sync {
+    color: #787c82;
+    font-style: italic;
+    margin-top: -16px;
+    margin-bottom: 24px;
+}
+
+/* ── Status badges ──────────────────────────────────────────────────────── */
+.mbsfw-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.mbsfw-badge--pending     { background: #f0f6fc; color: #2271b1; border: 1px solid #c5d9ed; }
+.mbsfw-badge--processing  { background: #fcf9e8; color: #996800; border: 1px solid #f5e6ab; }
+.mbsfw-badge--completed   { background: #edfaef; color: #00a32a; border: 1px solid #b8e6bf; }
+.mbsfw-badge--failed      { background: #fce8e8; color: #d63638; border: 1px solid #f5c5c5; }
+.mbsfw-badge--not-queued  { background: #f6f7f7; color: #787c82; border: 1px solid #dcdcde; }
+.mbsfw-badge--info        { background: #f0f6fc; color: #2271b1; border: 1px solid #c5d9ed; }
+
+/* ── Filter bar ─────────────────────────────────────────────────────────── */
+.mbsfw-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 16px 0;
+    padding: 12px 16px;
+    background: #f6f7f7;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+}
+
+.mbsfw-filter-bar select,
+.mbsfw-filter-bar input[type="date"] {
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid #8c8f94;
+    border-radius: 3px;
+    background: #fff;
+    font-size: 13px;
+}
+
+/* ── Orders table ───────────────────────────────────────────────────────── */
+.mbsfw-orders-table .mbsfw-error-msg {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    color: #d63638;
+}
+
+/* ── Logs panel ─────────────────────────────────────────────────────────── */
+#mbsfw-logs-panel {
+    margin-top: 20px;
+}
+
+#mbsfw-logs-panel table {
+    font-size: 12px;
+}
+
+#mbsfw-logs-panel .mbsfw-level-error   td:nth-child(2) { color: #d63638; font-weight: 600; }
+#mbsfw-logs-panel .mbsfw-level-warning td:nth-child(2) { color: #996800; font-weight: 600; }
+#mbsfw-logs-panel .mbsfw-level-info    td:nth-child(2) { color: #2271b1; }
+
+/* ── Connection status box (settings page) ──────────────────────────────── */
+.mbsfw-connection-status {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 4px;
+    border: 1px solid;
+    margin: 16px 0;
+    max-width: 600px;
+}
+
+.mbsfw-connection-status .dashicons {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.mbsfw-connection-status > div {
+    flex: 1;
+    line-height: 1.5;
+}
+
+.mbsfw-connection-status--connected {
+    background: #edfaef;
+    border-color: #b8e6bf;
+}
+
+.mbsfw-connection-status--connected .dashicons {
+    color: #00a32a;
+}
+
+.mbsfw-connection-status--disconnected {
+    background: #fce8e8;
+    border-color: #f5c5c5;
+}
+
+.mbsfw-connection-status--disconnected .dashicons {
+    color: #d63638;
+}
+
+/* ── Required field indicator ───────────────────────────────────────────── */
+.required {
+    color: #d63638;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 782px) {
+    .mbsfw-step__label { display: none; }
+    .mbsfw-stat-cards  { grid-template-columns: 1fr 1fr; }
+}

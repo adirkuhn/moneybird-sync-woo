@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Moneybird Sync for WooCommerce">
+    <description>WordPress Coding Standards for the Moneybird Sync plugin.</description>
+
+    <file>../includes</file>
+    <file>../models</file>
+    <file>../moneybird-sync-for-woo.php</file>
+
+    <arg name="extensions" value="php"/>
+    <arg name="colors"/>
+    <arg value="sp"/>
+
+    <rule ref="WordPress">
+        <!-- PSR-4 namespaced files: file names don't follow WP class-name convention -->
+        <exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+        <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+        <!-- Plugin uses namespaces, so global prefix rule does not apply -->
+        <exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound"/>
+    </rule>
+
+    <config name="minimum_supported_wp_version" value="6.0"/>
+    <config name="testVersion" value="8.1-"/>
+</ruleset>
